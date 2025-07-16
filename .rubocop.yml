@@ -1,0 +1,20 @@
+plugins:
+  - rubocop-performance
+  - rubocop-rake
+  - rubocop-rspec
+
+AllCops:
+  TargetRubyVersion: 3.1
+  NewCops: enable
+
+RSpec/ExampleLength:
+  Max: 15
+
+RSpec/MessageSpies:
+  EnforcedStyle: receive
+
+RSpec/MultipleExpectations:
+  Max: 3
+
+RSpec/MultipleMemoizedHelpers:
+  Max: 10
