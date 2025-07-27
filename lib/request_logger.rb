@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+require_relative 'request_logger/config'
 require_relative 'request_logger/version'
 require_relative 'request_logger/patches/net/http'
 
@@ -8,7 +9,17 @@ module RequestLogger
   class Error < StandardError; end
 
   class << self
+    def config
+      @config ||= RequestLogger::Config.new
+    end
+
+    def configure
+      yield(config)
+    end
+
     def log_connection(host, port)
+      return unless config.log_connection
+
       send_log("Connected to #{host}:#{port}")
     end
 
@@ -20,12 +31,16 @@ module RequestLogger
     private
 
     def log_request(request)
+      return unless config.log_request
+
       log_path(request[:method], request[:path])
       log_headers(request[:headers])
       log_body(request[:body])
     end
 
     def log_response(response)
+      return unless config.log_response
+
       log_status_code(response[:code])
       log_headers(response[:headers])
       log_body(response[:body])
@@ -36,6 +51,8 @@ module RequestLogger
     end
 
     def log_headers(headers)
+      return unless config.log_headers
+
       send_log("Headers: #{headers.inspect}")
     end
 
