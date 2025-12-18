@@ -23,12 +23,28 @@ module Net
       response = original_request(req, body, &)
 
       # Hook after request
+      return response unless loggable?(address)
+
       log_request(req, body, response)
 
       response
     end
 
     private
+
+    def loggable?(address)
+      config = RequestLogger.config
+      return true if config.url_list.nil? || config.url_list.empty?
+
+      case config.url_list_type
+      when :whitelist
+        config.url_list.include?(address)
+      when :blacklist
+        !config.url_list.include?(address)
+      else
+        true
+      end
+    end
 
     def log_request(req, body, response)
       RequestLogger.log(

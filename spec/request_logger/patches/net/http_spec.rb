@@ -59,6 +59,74 @@ RSpec.describe Net::HTTP do
       http.request(request)
     end
 
+    context 'with url_list_type = :whitelist' do
+      before do
+        RequestLogger.config.url_list_type = :whitelist
+        RequestLogger.config.url_list = ['example.com']
+      end
+
+      context 'when host is in the list' do
+        it 'logs the request' do
+          expect(RequestLogger).to receive(:log).with(expected_payload)
+          http.request(request)
+        end
+      end
+
+      context 'when host is not in the list' do
+        let(:http) { described_class.new('another-example.com', 80) }
+
+        it 'does not log the request' do
+          expect(RequestLogger).not_to receive(:log)
+          http.request(request)
+        end
+      end
+
+      context 'when list is empty' do
+        before do
+          RequestLogger.config.url_list = []
+        end
+
+        it 'logs the request' do
+          expect(RequestLogger).to receive(:log).with(expected_payload)
+          http.request(request)
+        end
+      end
+    end
+
+    context 'with url_list_type = :blacklist' do
+      before do
+        RequestLogger.config.url_list_type = :blacklist
+        RequestLogger.config.url_list = ['another-example.com']
+      end
+
+      context 'when host is not in the list' do
+        it 'logs the request' do
+          expect(RequestLogger).to receive(:log).with(expected_payload)
+          http.request(request)
+        end
+      end
+
+      context 'when host is in the list' do
+        let(:http) { described_class.new('another-example.com', 80) }
+
+        it 'does not log the request' do
+          expect(RequestLogger).not_to receive(:log)
+          http.request(request)
+        end
+      end
+
+      context 'when list is empty' do
+        before do
+          RequestLogger.config.url_list = []
+        end
+
+        it 'logs the request' do
+          expect(RequestLogger).to receive(:log).with(expected_payload)
+          http.request(request)
+        end
+      end
+    end
+
     context 'with request body' do
       let(:request_body) { '{"key":"value"}' }
       let(:response_body) { '{"status":"success"}' }

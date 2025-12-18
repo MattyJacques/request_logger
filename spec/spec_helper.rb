@@ -12,4 +12,8 @@ RSpec.configure do |config|
   config.expect_with :rspec do |c|
     c.syntax = :expect
   end
+
+  config.after(:each) do
+    RequestLogger.instance_variable_set(:@config, nil)
+  end
 end
