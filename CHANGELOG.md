@@ -1,5 +1,4 @@
-## [Unreleased]
+## [0.0.1] - 2025-12-23
 
-## [0.1.0] - 2025-07-09
-
-- Initial release
+- Log connections and requests handled by Net::HTTP
+- Configurable whitelist or blacklist for request path that get logged
