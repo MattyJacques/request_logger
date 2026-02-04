@@ -1,28 +1,62 @@
 # RequestLogger
 
-TODO: Delete this and the text below, and describe your gem
-
-Welcome to your new gem! In this directory, you'll find the files you need to be able to package up your Ruby library into a gem. Put your Ruby code in the file `lib/request_logger`. To experiment with that code, run `bin/console` for an interactive prompt.
+A simple Ruby gem that automatically logs HTTP requests and responses made using `Net::HTTP`. It is designed to help developers debug external API integrations by providing visibility into the traffic leaving and entering their application.
 
 ## Installation
-
-TODO: Replace `UPDATE_WITH_YOUR_GEM_NAME_IMMEDIATELY_AFTER_RELEASE_TO_RUBYGEMS_ORG` with your gem name right after releasing it to RubyGems.org. Please do not do it earlier due to security reasons. Alternatively, replace this section with instructions to install your gem from git if you don't plan to release to RubyGems.org.
 
 Install the gem and add to the application's Gemfile by executing:
 
 ```bash
-bundle add UPDATE_WITH_YOUR_GEM_NAME_IMMEDIATELY_AFTER_RELEASE_TO_RUBYGEMS_ORG
+bundle add request_logger
 ```
 
 If bundler is not being used to manage dependencies, install the gem by executing:
 
 ```bash
-gem install UPDATE_WITH_YOUR_GEM_NAME_IMMEDIATELY_AFTER_RELEASE_TO_RUBYGEMS_ORG
+gem install request_logger
 ```
 
 ## Usage
 
-TODO: Write usage instructions here
+Simply require the gem in your project. It automatically patches `Net::HTTP` to intercept and log requests.
+
+```ruby
+require 'request_logger'
+
+# Make a request as usual
+Net::HTTP.get(URI('https://www.example.com'))
+```
+
+By default, the gem will output logs to `STDOUT`.
+
+## Configuration
+
+You can configure what information gets logged by using the `configure` block.
+
+```ruby
+RequestLogger.configure do |config|
+  # Log when a connection is established (Default: false)
+  config.log_connection = true
+
+  # Log the request details (method, path, body) (Default: true)
+  config.log_request = true
+
+  # Log the response details (status code, body) (Default: true)
+  config.log_response = true
+
+  # Log request and response headers (Default: false)
+  config.log_headers = true
+end
+```
+
+### Defaults
+
+| Option           | Default | Description                                      |
+|------------------|---------|--------------------------------------------------|
+| `log_connection` | `false` | Logs the host and port when a connection opens.  |
+| `log_request`    | `true`  | Logs the HTTP method, URL, and request body.     |
+| `log_response`   | `true`  | Logs the response status code and body.          |
+| `log_headers`    | `false` | Includes headers in the request/response logs.   |
 
 ## Development
 
@@ -32,7 +66,7 @@ To install this gem onto your local machine, run `bundle exec rake install`. To 
 
 ## Contributing
 
-Bug reports and pull requests are welcome on GitHub at https://github.com/[USERNAME]/request_logger. This project is intended to be a safe, welcoming space for collaboration, and contributors are expected to adhere to the [code of conduct](https://github.com/[USERNAME]/request_logger/blob/master/CODE_OF_CONDUCT.md).
+Bug reports and pull requests are welcome on GitHub at https://github.com/MattyJacques/request_logger. This project is intended to be a safe, welcoming space for collaboration, and contributors are expected to adhere to the [code of conduct](https://github.com/MattyJacques/request_logger/blob/main/CODE_OF_CONDUCT.md).
 
 ## License
 
@@ -40,4 +74,4 @@ The gem is available as open source under the terms of the [MIT License](https:/
 
 ## Code of Conduct
 
-Everyone interacting in the RequestLogger project's codebases, issue trackers, chat rooms and mailing lists is expected to follow the [code of conduct](https://github.com/[USERNAME]/request_logger/blob/master/CODE_OF_CONDUCT.md).
+Everyone interacting in the RequestLogger project's codebases, issue trackers, chat rooms and mailing lists is expected to follow the [code of conduct](https://github.com/MattyJacques/request_logger/blob/main/CODE_OF_CONDUCT.md).
